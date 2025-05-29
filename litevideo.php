@@ -9,19 +9,49 @@ Text Domain: litevideo
 Domain Path: /languages
 */
 
-// Load Text Domain
-add_action('plugins_loaded', 'litevideo_load_textdomain');
+/**
+ * Loads the translation files for the LiteVideo plugin.
+ *
+ * This function loads the translation files for the LiteVideo plugin, which are
+ * located in the `languages` folder of the plugin directory. It is triggered by
+ * the `plugins_loaded` action hook.
+ *
+ * @since 1.0
+ */
 function litevideo_load_textdomain() {
   load_plugin_textdomain('litevideo', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
+add_action('plugins_loaded', 'litevideo_load_textdomain');
 
-// Check FFmpeg
+/**
+ * Checks if FFmpeg is installed and executable.
+ *
+ * This function executes the `ffmpeg -version` command to check if FFmpeg is
+ * installed and executable on the server. If the command succeeds, the function
+ * returns `true`, indicating that FFmpeg is available. Otherwise, it returns
+ * `false`.
+ *
+ * @since 1.0
+ *
+ * @return bool True if FFmpeg is installed and executable, false otherwise.
+ */
 function litevideo_check_ffmpeg() {
   return shell_exec('ffmpeg -version') !== null;
 }
 
-// Convert Uploaded Videos
-add_filter('wp_handle_upload', 'litevideo_convert_video_to_webm');
+/**
+ * Converts an uploaded video file to WebM format using the VP9 codec.
+ *
+ * This function is triggered during the WordPress upload process to check if the
+ * uploaded file is a video and if the conversion option is enabled. It uses FFmpeg
+ * to convert the video to WebM format with VP9 video codec and Opus audio codec.
+ * If the conversion is successful, the original file is replaced with the WebM
+ * version, and the file path, URL, and MIME type are updated accordingly.
+ *
+ * @param array $upload An associative array containing information about the uploaded file.
+ * @return array The modified upload array with the updated file path, URL, and MIME type if conversion occurs.
+ */
+
 function litevideo_convert_video_to_webm($upload) {
   if (get_option('litevideo_enable_conversion', 1) && strpos($upload['type'], 'video/') === 0) {
     $input_file = $upload['file'];
@@ -37,8 +67,19 @@ function litevideo_convert_video_to_webm($upload) {
   }
   return $upload;
 }
+add_filter('wp_handle_upload', 'litevideo_convert_video_to_webm');
 
-// Batch Convert Existing Videos
+/**
+ * Batch converts all video attachments in the media library to WebM format using the VP9 codec.
+ *
+ * This function retrieves all video attachments from the WordPress media library,
+ * converts them to WebM format using FFmpeg with VP9 codec and Opus audio encoding,
+ * updates the attachment file paths and metadata, and deletes the original files.
+ * It requires the current user to have the 'manage_options' capability.
+ *
+ * @since 1.0
+ */
+
 function litevideo_batch_convert_videos() {
   if (!current_user_can('manage_options')) return;
   $videos = get_posts(['post_type' => 'attachment', 'post_mime_type' => 'video', 'numberposts' => -1]);
@@ -62,8 +103,16 @@ add_action('admin_init', function() {
   }
 });
 
-// Admin Settings Page
-add_action('admin_menu', 'litevideo_add_settings_page');
+/**
+ * Adds a settings page for LiteVideo in the WordPress admin menu.
+ *
+ * This function registers a new settings page under the "Settings" menu
+ * in the WordPress admin dashboard, allowing administrators to configure
+ * the LiteVideo plugin settings.
+ *
+ * @since 1.0
+ */
+
 function litevideo_add_settings_page() {
   add_options_page(
     __('LiteVideo Settings', 'litevideo'),
@@ -73,6 +122,16 @@ function litevideo_add_settings_page() {
     'litevideo_settings_page'
   );
 }
+add_action('admin_menu', 'litevideo_add_settings_page');
+
+/**
+ * LiteVideo Settings Page
+ *
+ * Renders the LiteVideo settings page, which shows an error notice if FFmpeg is not installed,
+ * displays a form to enable/disable video conversion, and a link to convert all existing videos to WebM.
+ *
+ * @since 1.0
+ */
 function litevideo_settings_page() {
   ?>
   <div class="wrap">
@@ -96,8 +155,11 @@ function litevideo_settings_page() {
   <?php
 }
 
-// Register Settings
-add_action('admin_init', 'litevideo_register_settings');
+/**
+ * Registers LiteVideo settings.
+ *
+ * @since 1.0
+ */
 function litevideo_register_settings() {
   register_setting('litevideo_settings_group', 'litevideo_enable_conversion', ['default' => 1]);
   add_settings_section('litevideo_main_section', __('Main Settings', 'litevideo'), null, 'litevideo-settings');
@@ -109,6 +171,13 @@ function litevideo_register_settings() {
     'litevideo_main_section'
   );
 }
+add_action('admin_init', 'litevideo_register_settings');
+
+/**
+ * Renders the field for enabling/disabling video conversion to WebM.
+ *
+ * @since 1.0
+ */
 function litevideo_enable_conversion_field() {
   $enabled = get_option('litevideo_enable_conversion', 1);
   ?>
@@ -117,18 +186,32 @@ function litevideo_enable_conversion_field() {
   <?php
 }
 
-// FFmpeg Notice
-add_action('admin_notices', 'litevideo_ffmpeg_notice');
+/**
+ * Displays an admin notice if FFmpeg is not installed.
+ *
+ * @since 1.0
+ */
 function litevideo_ffmpeg_notice() {
   if (!litevideo_check_ffmpeg()) {
     echo '<div class="notice notice-error"><p>' . __('FFmpeg is not installed. Please install FFmpeg to use LiteVideo.', 'litevideo') . '</p></div>';
   }
 }
+add_action('admin_notices', 'litevideo_ffmpeg_notice');
 
-// Add Settings Link in Plugins List
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'litevideo_settings_link');
+/**
+ * Adds a settings link to the plugin action links.
+ *
+ * This function appends a "Settings" link to the list of action links displayed
+ * on the Plugins page for the LiteVideo plugin, allowing users to easily access
+ * the LiteVideo settings page.
+ *
+ * @param array $links An array of plugin action links.
+ * @return array Modified array of plugin action links with the settings link added.
+ */
+
 function litevideo_settings_link($links) {
   $settings_link = '<a href="' . admin_url('options-general.php?page=litevideo-settings') . '">' . __('Settings', 'litevideo') . '</a>';
   array_unshift($links, $settings_link);
   return $links;
 }
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'litevideo_settings_link');
