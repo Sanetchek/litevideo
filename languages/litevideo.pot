@@ -1,0 +1,69 @@
+# Copyright (C) 2025 Oleksandr Gryshko
+# This file is distributed under the same license as the LiteVideo plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: LiteVideo 1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/litevideo\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-05-29T14:38:48+03:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: litevideo\n"
+
+#. Plugin Name of the plugin
+#: litevideo.php
+#: litevideo.php:70
+msgid "LiteVideo"
+msgstr ""
+
+#. Description of the plugin
+#: litevideo.php
+msgid "Converts uploaded videos to WebM with VP9 codec for optimized performance."
+msgstr ""
+
+#. Author of the plugin
+#: litevideo.php
+msgid "Oleksandr Gryshko"
+msgstr ""
+
+#. Author URI of the plugin
+#: litevideo.php
+msgid "https://github.com/Sanetchek"
+msgstr ""
+
+#: litevideo.php:69
+#: litevideo.php:79
+msgid "LiteVideo Settings"
+msgstr ""
+
+#: litevideo.php:82
+msgid "FFmpeg is not installed on the server. Video conversion to WebM is disabled until FFmpeg is installed."
+msgstr ""
+
+#: litevideo.php:93
+msgid "Convert all existing videos to WebM"
+msgstr ""
+
+#: litevideo.php:103
+msgid "Main Settings"
+msgstr ""
+
+#: litevideo.php:106
+msgid "Enable Video Conversion"
+msgstr ""
+
+#: litevideo.php:116
+msgid "Convert uploaded videos to WebM (VP9)"
+msgstr ""
+
+#: litevideo.php:124
+msgid "FFmpeg is not installed. Please install FFmpeg to use LiteVideo."
+msgstr ""
+
+#: litevideo.php:131
+msgid "Settings"
+msgstr ""
